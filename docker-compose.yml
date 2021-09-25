@@ -1,0 +1,27 @@
+version: '3.1'
+services:
+    database:
+        image: mongo
+        restart: always
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: "root"
+            MONGO_INITDB_ROOT_PASSWORD: "mongodb-password"
+            MONGO_INITDB_DATABASE: "test"
+    backend:
+        build: ./go-server
+        ports:
+            - "8080:8080"
+        environment:
+            DB_URI: "mongodb://root:mongodb-password@localhost:27017"
+            DB_NAME: "test"
+            DB_USER: "root"
+            DB_PASS: "mongodb-password"
+            DB_COLLECTION_NAME: "todolist"
+        depends_on:
+            - database
+    frontend:
+        build: ./client
+        ports:
+            - "3000:8000"
